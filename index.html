@@ -1,0 +1,380 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Ellie's Spanish Practice</title>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #fdf8f2;
+      --surface: #ffffff;
+      --accent: #c84b2f;
+      --accent-light: #f5e6e1;
+      --accent-dark: #8f2e18;
+      --text: #1a1208;
+      --muted: #7a6a56;
+      --border: #e8ddd0;
+      --playing-bg: #fff8f5;
+      --playing-border: #c84b2f;
+    }
+
+    body {
+      font-family: 'DM Sans', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      padding: 0;
+    }
+
+    header {
+      background: var(--text);
+      color: #fdf8f2;
+      padding: 2.5rem 2rem 2rem;
+      position: relative;
+      overflow: hidden;
+    }
+
+    header::before {
+      content: '¿?';
+      font-family: 'Playfair Display', serif;
+      font-size: 180px;
+      color: rgba(255,255,255,0.04);
+      position: absolute;
+      right: -10px;
+      top: -30px;
+      line-height: 1;
+      pointer-events: none;
+    }
+
+    .header-label {
+      font-size: 11px;
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 0.5rem;
+      font-weight: 500;
+    }
+
+    h1 {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(2rem, 5vw, 3.2rem);
+      font-weight: 600;
+      line-height: 1.1;
+      margin-bottom: 0.75rem;
+    }
+
+    .header-sub {
+      font-size: 14px;
+      color: rgba(253,248,242,0.55);
+      font-weight: 300;
+    }
+
+    .controls-bar {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 1rem 2rem;
+      background: var(--surface);
+      border-bottom: 1px solid var(--border);
+      flex-wrap: wrap;
+    }
+
+    .controls-bar label {
+      font-size: 13px;
+      color: var(--muted);
+      font-weight: 400;
+    }
+
+    select {
+      font-family: 'DM Sans', sans-serif;
+      font-size: 13px;
+      padding: 6px 10px;
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      background: var(--bg);
+      color: var(--text);
+      cursor: pointer;
+    }
+
+    .btn {
+      font-family: 'DM Sans', sans-serif;
+      font-size: 13px;
+      font-weight: 500;
+      padding: 6px 14px;
+      border-radius: 6px;
+      border: 1px solid var(--border);
+      background: transparent;
+      color: var(--text);
+      cursor: pointer;
+      transition: background 0.15s, border-color 0.15s;
+    }
+
+    .btn:hover { background: var(--accent-light); border-color: var(--accent); color: var(--accent-dark); }
+
+    .voice-badge {
+      margin-left: auto;
+      font-size: 11px;
+      color: var(--muted);
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 4px 12px;
+    }
+
+    main {
+      max-width: 760px;
+      margin: 0 auto;
+      padding: 2rem 1.5rem 4rem;
+    }
+
+    .progress-line {
+      font-size: 12px;
+      color: var(--muted);
+      margin-bottom: 1.25rem;
+      letter-spacing: 0.5px;
+    }
+
+    .q-card {
+      display: flex;
+      align-items: flex-start;
+      gap: 1rem;
+      padding: 1.1rem 1.25rem;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      margin-bottom: 10px;
+      cursor: pointer;
+      transition: border-color 0.18s, background 0.18s, transform 0.12s;
+      position: relative;
+    }
+
+    .q-card:hover {
+      border-color: #c84b2f88;
+      background: var(--playing-bg);
+      transform: translateX(3px);
+    }
+
+    .q-card.playing {
+      border-color: var(--playing-border);
+      background: var(--playing-bg);
+      transform: translateX(3px);
+    }
+
+    .q-num {
+      font-size: 11px;
+      color: var(--muted);
+      min-width: 20px;
+      padding-top: 3px;
+      font-weight: 300;
+    }
+
+    .q-card.playing .q-num { color: var(--accent); }
+
+    .q-text {
+      font-size: 15.5px;
+      line-height: 1.55;
+      flex: 1;
+      color: var(--text);
+    }
+
+    .q-icon {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      background: var(--accent-light);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      transition: background 0.15s;
+    }
+
+    .q-card.playing .q-icon { background: var(--accent); }
+
+    .q-icon svg { width: 15px; height: 15px; fill: var(--accent); }
+    .q-card.playing .q-icon svg { fill: white; }
+
+    .wave-bars {
+      display: none;
+      align-items: center;
+      gap: 2px;
+      height: 15px;
+    }
+    .q-card.playing .wave-bars { display: flex; }
+    .q-card.playing .static-icon { display: none; }
+
+    .wave-bars span {
+      display: block;
+      width: 3px;
+      background: white;
+      border-radius: 2px;
+      animation: wave 0.8s ease-in-out infinite;
+    }
+    .wave-bars span:nth-child(1) { height: 6px; animation-delay: 0s; }
+    .wave-bars span:nth-child(2) { height: 12px; animation-delay: 0.15s; }
+    .wave-bars span:nth-child(3) { height: 8px; animation-delay: 0.3s; }
+    .wave-bars span:nth-child(4) { height: 14px; animation-delay: 0.1s; }
+    .wave-bars span:nth-child(5) { height: 5px; animation-delay: 0.25s; }
+
+    @keyframes wave {
+      0%, 100% { transform: scaleY(1); }
+      50% { transform: scaleY(0.4); }
+    }
+
+    footer {
+      text-align: center;
+      font-size: 12px;
+      color: var(--muted);
+      padding: 2rem;
+      border-top: 1px solid var(--border);
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <div class="header-label">Verbal Exam Prep</div>
+  <h1>Ellie's Spanish<br>Practice</h1>
+  <p class="header-sub">Click any question to hear it spoken aloud</p>
+</header>
+
+<div class="controls-bar">
+  <label for="speed">Speed</label>
+  <select id="speed">
+    <option value="0.7">Slow</option>
+    <option value="0.9" selected>Normal</option>
+    <option value="1.1">Fast</option>
+  </select>
+  <button class="btn" onclick="shuffle()">↺ Shuffle</button>
+  <button class="btn" onclick="resetOrder()">Reset order</button>
+  <span class="voice-badge" id="voice-badge">Loading voice…</span>
+</div>
+
+<main>
+  <div class="progress-line" id="progress-line">30 questions</div>
+  <div id="list"></div>
+</main>
+
+<footer>Ellie's Spanish Verbal Practice &nbsp;·&nbsp; ¡Buena suerte!</footer>
+
+<script>
+const questions = [
+  "¿Qué deseas para tus amigos el próximo año?",
+  "¿Qué actividades te gusta hacer con tus amigos? Menciona dos.",
+  "¿Qué hiciste el fin de semana pasado?",
+  "¿Qué estás haciendo últimamente para sacar buenas notas?",
+  "¿Te casarás en el futuro? ¿Tendrás hijos?",
+  "¿Qué es necesario que hagas para sacar buenas notas?",
+  "¿Qué estás haciendo últimamente los fines de semana?",
+  "¿Quién te ha ayudado este año escolar?",
+  "¿Qué aprendiste de la cultura de España cuando leíste Viva el toro?",
+  "¿Quién es tu mejor amigo o amiga? ¿Cómo es?",
+  "¿Qué quieres para tus padres?",
+  "¿De niño o niña, cómo eras?",
+  "Dime dos mandatos para una persona que está gordita: uno positivo y otro negativo.",
+  "¿Qué es algo que todavía no has hecho?",
+  "¿Qué harás en diez años?",
+  "¿Qué es importante que tus maestros hagan para ayudarte? Menciona dos cosas.",
+  "¿Cuál fue el día más divertido del mes pasado?",
+  "Dale dos consejos en forma de mandatos a un estudiante para sacar una A en la clase de español.",
+  "¿Qué regla de la escuela te gusta y cuál te choca?",
+  "¿Cuántos años tendrás en cinco años?",
+  "¿Qué deseas para el chico o la chica que te gusta?",
+  "¿Qué veías en la tele de chiquito o chiquita?",
+  "Dales dos mandatos a tu hermanito para que tenga limpio su cuarto.",
+  "¿Alguna vez has ido a otro país? ¿A dónde?",
+  "¿Qué profesión querrás en el futuro?",
+  "¿Qué es importante que tenga o que sea alguien para ser tu amigo?",
+  "¿Ya o todavía no has sacado tu licencia de manejar?",
+  "¿De pequeño o pequeña, adónde ibas a menudo con tu familia?",
+  "¿Qué estás haciendo para ser un buen hijo o una buena hija últimamente?",
+  "¿Qué harás este verano?"
+];
+
+let order = [...Array(questions.length).keys()];
+let currentUtterance = null;
+let currentIdx = null;
+let chosenVoice = null;
+
+function loadVoices() {
+  const voices = speechSynthesis.getVoices();
+  chosenVoice = voices.find(v => v.name.toLowerCase().includes('monica'))
+    || voices.find(v => v.lang.startsWith('es'))
+    || null;
+  const badge = document.getElementById('voice-badge');
+  badge.textContent = chosenVoice ? '🎙 ' + chosenVoice.name : 'Default Spanish voice';
+}
+
+function render() {
+  const list = document.getElementById('list');
+  list.innerHTML = '';
+  order.forEach((qi, pos) => {
+    const card = document.createElement('div');
+    card.className = 'q-card';
+    card.id = 'card-' + qi;
+    card.setAttribute('role', 'button');
+    card.setAttribute('aria-label', 'Play question ' + (pos + 1));
+    card.innerHTML = `
+      <span class="q-num">${pos + 1}</span>
+      <span class="q-text">${questions[qi]}</span>
+      <div class="q-icon">
+        <div class="static-icon">
+          <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+            <path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-.73-3.37-1.9-4.5l-1.42 1.42C14.07 9.86 14.5 10.88 14.5 12s-.43 2.14-1.32 3.08l1.42 1.42C15.77 15.37 16.5 13.77 16.5 12z"/>
+          </svg>
+        </div>
+        <div class="wave-bars" aria-hidden="true">
+          <span></span><span></span><span></span><span></span><span></span>
+        </div>
+      </div>
+    `;
+    card.addEventListener('click', () => speak(qi, card));
+    list.appendChild(card);
+  });
+  document.getElementById('progress-line').textContent = questions.length + ' questions';
+}
+
+function speak(qi, card) {
+  if (currentUtterance) speechSynthesis.cancel();
+  if (currentIdx === qi) { currentIdx = null; return; }
+
+  document.querySelectorAll('.q-card').forEach(c => c.classList.remove('playing'));
+  card.classList.add('playing');
+  currentIdx = qi;
+
+  const rate = parseFloat(document.getElementById('speed').value);
+  const utter = new SpeechSynthesisUtterance(questions[qi]);
+  utter.lang = 'es-ES';
+  utter.rate = rate;
+  if (chosenVoice) utter.voice = chosenVoice;
+
+  utter.onend = () => { card.classList.remove('playing'); currentIdx = null; };
+  utter.onerror = () => { card.classList.remove('playing'); currentIdx = null; };
+  currentUtterance = utter;
+  speechSynthesis.speak(utter);
+}
+
+function shuffle() {
+  if (currentUtterance) { speechSynthesis.cancel(); currentIdx = null; }
+  for (let i = order.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [order[i], order[j]] = [order[j], order[i]];
+  }
+  render();
+}
+
+function resetOrder() {
+  if (currentUtterance) { speechSynthesis.cancel(); currentIdx = null; }
+  order = [...Array(questions.length).keys()];
+  render();
+}
+
+if (speechSynthesis.getVoices().length) loadVoices();
+else speechSynthesis.onvoiceschanged = loadVoices;
+render();
+</script>
+</body>
+</html>
